@@ -6,16 +6,6 @@ const SearchCity = ({ onSearchChange }) => {
   const [debounceSearch, setDebounceSearch] = useState("");
   const [geoLocationData, setGeoLocationData] = useState([]);
 
-  useEffect(() => {
-    const debounceTimeout = setTimeout(() => {
-      setDebounceSearch(searchTerm.toLowerCase().trim());
-    }, 600);
-
-    return () => {
-      clearTimeout(debounceTimeout);
-    };
-  }, [searchTerm]);
-
   const fetchGeoLocationData = useCallback(async (inputValue) => {
     try {
       const data = await fetch(
@@ -30,7 +20,7 @@ const SearchCity = ({ onSearchChange }) => {
 
       const transformedGeoData = response.data.map(
         ({
-          id,
+          id = 404,
           name = "Cluj",
           country = "Romania",
           countryCode = "RO",
@@ -52,10 +42,16 @@ const SearchCity = ({ onSearchChange }) => {
       console.error(err);
     }
   });
-
   useEffect(() => {
-    fetchGeoLocationData(debounceSearch);
-  }, [fetchGeoLocationData]);
+    const debounceTimeout = setTimeout(() => {
+      setDebounceSearch(searchTerm.toLowerCase().trim());
+      fetchGeoLocationData(debounceSearch);
+    }, 600);
+
+    return () => {
+      clearTimeout(debounceTimeout);
+    };
+  }, [searchTerm, debounceSearch, fetchGeoLocationData]);
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
@@ -75,6 +71,7 @@ const SearchCity = ({ onSearchChange }) => {
           value={searchTerm}
         />
       </div>
+      <p>{debounceSearch}</p>
       <div>
         {geoLocationData
           .filter((city) => {
