@@ -1,7 +1,16 @@
-import './App.css';
+import "./App.css";
+import SearchCity from "./components/search/SearchCity";
 
-function App() {
-  return <div className="App">App</div>;
-}
+const App = () => {
+  const handleSearchData = (searchData) => {
+    console.log("Search Data", searchData);
+  };
+
+  return (
+    <div className="App">
+      <SearchCity onSearchChange={handleSearchData} />
+    </div>
+  );
+};
 
 export default App;
