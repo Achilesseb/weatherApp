@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { geoApiOptions, GEO_API_URL } from "../../api";
 
 const SearchCity = ({ onSearchChange }) => {
@@ -19,29 +19,37 @@ const SearchCity = ({ onSearchChange }) => {
   const fetchGeoLocationData = useCallback(async (inputValue) => {
     try {
       const data = await fetch(
-        `${GEO_API_URL}/cities?minPopulation=10000&namePrefix=${inputValue}`,
+        `${GEO_API_URL}/cities?minPopulation=30000&namePrefix=${inputValue}`,
         geoApiOptions
       );
 
       if (!data.ok) {
         throw new Error("Something is not working!");
       }
-
       const response = await data.json();
 
-      const transformedGeoData = response.data.map((city) => {
-        return {
-          id: city.id,
-          country: city.country,
-          countryCode: city.countryCode,
-          lat: city.latitude,
-          lon: city.longitude,
-        };
-      });
-      console.log(transformedGeoData);
+      const transformedGeoData = response.data.map(
+        ({
+          id,
+          name = "Cluj",
+          country = "Romania",
+          countryCode = "RO",
+          latitude = 1.0,
+          longitude = 1.0,
+        }) => {
+          return {
+            id: id,
+            country: country,
+            name: name,
+            countryCode: countryCode,
+            lat: latitude,
+            lon: longitude,
+          };
+        }
+      );
       setGeoLocationData(transformedGeoData);
     } catch (err) {
-      console.log(err.message);
+      console.error(err);
     }
   });
 
@@ -52,31 +60,33 @@ const SearchCity = ({ onSearchChange }) => {
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
     fetchGeoLocationData(debounceSearch);
+    onSearchChange(geoLocationData);
   };
 
   return (
-    <div>
-      <label htmlFor="search__input">Search City </label>
-      <input
-        id="search__input"
-        type="text"
-        placeholder="Search for your city"
-        onChange={handleSearch}
-        value={searchTerm}
-      />
-      <p>
-        {debounceSearch}
-        {console.log(debounceSearch)}
-      </p>
-      {geoLocationData.map((item) => {
-        {
-          console.log(item);
-        }
-        <p style={{ color: "white" }}>
-          {item.country} {item.countryCode}
-        </p>;
-      })}
-    </div>
+    <React.Fragment>
+      <div>
+        <label htmlFor="search__input">Search City </label>
+        <input
+          id="search__input"
+          type="text"
+          placeholder="Search for your city"
+          onChange={handleSearch}
+          value={searchTerm}
+        />
+      </div>
+      <div>
+        {geoLocationData
+          .filter((city) => {
+            const citySearchTerm = debounceSearch.toLowerCase();
+            const citySearchName = city.name;
+            return citySearchName.startsWith(citySearchTerm.toLowerCase());
+          })
+          .map((city) => {
+            <p>{`${city.name}, ${city.country}, ${city.countryCode}`}</p>;
+          })}
+      </div>
+    </React.Fragment>
   );
 };
 
