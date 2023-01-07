@@ -1,9 +1,10 @@
-import "./App.css";
-import SearchCity from "./components/search/SearchCity";
+import './App.css';
+import SearchCity from './components/search/SearchCity';
 
 const App = () => {
   const handleSearchData = (searchData) => {
-    console.log("Search Data", searchData);
+    // const splitCoodinates = searchData.coodinates.split('');
+    // console.log(splitCoodinates);
   };
 
   return (
