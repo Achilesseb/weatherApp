@@ -11,7 +11,7 @@ const SearchCity = () => {
 
   const handleSearchData = (searchData) => {
     console.log(searchData);
-    searchData.map((city) => {
+    const coordinates = searchData.map((city) => {
       const [lan, lon] = city.coordinates.split(" ");
       return console.log(lan, lon);
     });
