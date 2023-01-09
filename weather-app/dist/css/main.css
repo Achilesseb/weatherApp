@@ -1,1 +1,9 @@
-/*# sourceMappingURL=main.css.map */
+body {
+  background-color: #333;
+  color: white;
+  font-family: "Raleway", sans-serif;
+}
+
+div {
+  padding-bottom: 0.35rem;
+}/*# sourceMappingURL=main.css.map */
